@@ -1,0 +1,18 @@
+{
+  "title": "Titre du quiz",
+  "description": "Ceci est une simple description",
+  "questions": [
+    {
+      "title": "Quel est la bonne réponse ?",
+      "type": "unique",
+      "answers": ["reponse 1", "reponse 2"],
+      "correct_answers": "reponse 1"
+    },
+    {
+      "title": "Quel sont les bonnes réponses ?",
+      "type": "multiple",
+      "answers": ["reponse 1", "reponse 2", "reponse 3", "reponse 4"],
+      "correct_answers": ["reponse 2", "reponse 4"]
+    }
+  ]
+}
