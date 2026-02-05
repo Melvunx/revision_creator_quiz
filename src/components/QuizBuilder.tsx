@@ -117,6 +117,7 @@ export const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
                 {question.type === "unique" ? (
                   <RadioGroup
                     value={question.correct_answers as string}
+                    disabled={answer ? false : true}
                     onValueChange={(value) =>
                       onToggleCorrect(question.id, value)
                     }
@@ -125,6 +126,7 @@ export const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
                   </RadioGroup>
                 ) : (
                   <Checkbox
+                    disabled={answer ? false : true}
                     checked={
                       Array.isArray(question.correct_answers) &&
                       question.correct_answers.includes(answer)

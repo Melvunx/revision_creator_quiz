@@ -133,7 +133,6 @@ export const useQuiz = () => {
   };
 
   const exportQuiz = () => {
-    // Nettoyer les données avant export (retirer les IDs temporaires)
     const cleanQuiz: ExportQuiz = {
       title: quiz.title,
       description: quiz.description,
@@ -141,6 +140,10 @@ export const useQuiz = () => {
       questions: quiz.questions.map(({ id, ...question }) => question),
     };
 
+    // Sauvegarder dans localStorage pour test rapide
+    localStorage.setItem("currentQuiz", JSON.stringify(cleanQuiz));
+
+    // Export JSON
     const dataStr = JSON.stringify(cleanQuiz, null, 2);
     const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
@@ -149,6 +152,18 @@ export const useQuiz = () => {
     link.download = `${quiz.title.toLowerCase().replace(/\s+/g, "-") || "quiz"}.json`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  const storeQuiz = (quiz: Quiz) => {
+    localStorage.clear();
+
+    const cleanQuiz = {
+      title: quiz.title,
+      description: quiz.description,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      questions: quiz.questions.map(({ id, ...question }) => question),
+    };
+    localStorage.setItem("currentQuiz", JSON.stringify(cleanQuiz));
   };
 
   return {
@@ -163,5 +178,6 @@ export const useQuiz = () => {
     toggleCorrectAnswer,
     changeQuestionType,
     exportQuiz,
+    storeQuiz,
   };
 };
