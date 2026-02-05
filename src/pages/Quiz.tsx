@@ -1,5 +1,3 @@
-const Quiz = () => {
+export default function Quiz() {
   return <div>Quiz</div>;
-};
-
-export default Quiz;
+}
