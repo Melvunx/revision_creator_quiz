@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useQuiz } from "@/hooks/useQuiz";
-import { Download, Play, Plus } from "lucide-react";
+import { ArrowRight, Download, Play, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
@@ -22,18 +22,63 @@ export default function Home() {
     deleteAnswer,
     toggleCorrectAnswer,
     changeQuestionType,
-    exportQuiz,
     storeQuiz,
+    exportQuiz,
   } = useQuiz();
 
   const handleTestQuiz = () => {
-    if (quiz.title && quiz.questions.length > 0) storeQuiz(quiz);
+    if (quiz.title && quiz.questions.length > 0) storeQuiz();
     navigate("/quiz");
+  };
+
+  const isQuizValid = () => {
+    // Vérifier le titre du quiz
+    if (!quiz.title || quiz.title.trim() === "") {
+      return false;
+    }
+
+    // Vérifier qu'il y a au moins une question
+    if (quiz.questions.length === 0) {
+      return false;
+    }
+
+    // Vérifier chaque question
+    for (const question of quiz.questions) {
+      // Vérifier le titre de la question
+      if (!question.title || question.title.trim() === "") {
+        return false;
+      }
+
+      // Vérifier que toutes les réponses sont remplies
+      for (const answer of question.answers) {
+        if (!answer || answer.trim() === "") {
+          return false;
+        }
+      }
+
+      // Vérifier qu'au moins une réponse correcte est sélectionnée
+      if (question.type === "unique") {
+        // Pour les questions à choix unique
+        if (!question.correct_answers || question.correct_answers === "") {
+          return false;
+        }
+      } else {
+        // Pour les questions à choix multiple
+        if (
+          !Array.isArray(question.correct_answers) ||
+          question.correct_answers.length === 0
+        ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
-      <div className="container mx-auto py-8 max-w-4xl">
+      <div className="container mx-auto py-6 max-w-6xl">
         {/* Header avec badge */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-6">
@@ -48,7 +93,9 @@ export default function Home() {
           {/* Présentation du projet */}
           <div className="bg-card border rounded-lg p-6 space-y-4">
             <div>
-              <h2 className="text-xl font-semibold mb-2">À propos</h2>
+              <h2 className="text-xl font-semibold mb-2 bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                À propos
+              </h2>
               <p className="text-muted-foreground">
                 Créez facilement des quiz interactifs et exportez-les au format
                 JSON. Idéal pour l'apprentissage, l'évaluation ou simplement
@@ -91,7 +138,9 @@ export default function Home() {
         {/* Formulaire de création */}
         <div className="space-y-8">
           <div className="bg-card border rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-6">Informations du quiz</h3>
+            <h3 className="text-lg font-semibold mb-6 bg-linear-to-r from-primary to-primary/30 bg-clip-text text-transparent">
+              Informations du quiz
+            </h3>
             <div className="space-y-10">
               <div className="flex flex-col gap-1">
                 <Label className="ml-1" htmlFor="title">
@@ -126,6 +175,22 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Message d'avertissement */}
+          {quiz.questions.length > 0 && !isQuizValid() && (
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+              <p className="text-sm text-yellow-600 dark:text-yellow-500">
+                ⚠️ Complétez tous les champs avant de tester ou exporter le quiz
+                :
+              </p>
+              <ul className="text-xs text-yellow-600/80 dark:text-yellow-500/80 mt-2 ml-4 list-disc">
+                <li>Titre du quiz</li>
+                <li>Titre de chaque question</li>
+                <li>Toutes les réponses</li>
+                <li>Au moins une réponse correcte par question</li>
+              </ul>
+            </div>
+          )}
 
           {/* Questions */}
           {quiz.questions.length > 0 && (
@@ -162,6 +227,7 @@ export default function Home() {
             {quiz.questions.length === 0 && (
               <Button variant="outline" size="lg" onClick={handleTestQuiz}>
                 Tester un quiz
+                <ArrowRight className="h-4 w-4 mr-2" />
               </Button>
             )}
 
@@ -171,7 +237,7 @@ export default function Home() {
                   onClick={handleTestQuiz}
                   variant="outline"
                   size="lg"
-                  disabled={!quiz.title}
+                  disabled={!isQuizValid()}
                 >
                   <Play className="h-4 w-4 mr-2" />
                   Tester le quiz
@@ -181,7 +247,7 @@ export default function Home() {
                   onClick={exportQuiz}
                   variant="secondary"
                   size="lg"
-                  disabled={!quiz.title}
+                  disabled={!isQuizValid()}
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Exporter JSON

@@ -132,16 +132,22 @@ export const useQuiz = () => {
     }));
   };
 
-  const exportQuiz = () => {
+  const storeQuiz = () => {
+    localStorage.clear();
+
     const cleanQuiz: ExportQuiz = {
       title: quiz.title,
       description: quiz.description,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       questions: quiz.questions.map(({ id, ...question }) => question),
     };
-
-    // Sauvegarder dans localStorage pour test rapide
     localStorage.setItem("currentQuiz", JSON.stringify(cleanQuiz));
+
+    return cleanQuiz;
+  };
+
+  const exportQuiz = () => {
+    const cleanQuiz = storeQuiz();
 
     // Export JSON
     const dataStr = JSON.stringify(cleanQuiz, null, 2);
@@ -154,17 +160,7 @@ export const useQuiz = () => {
     URL.revokeObjectURL(url);
   };
 
-  const storeQuiz = (quiz: Quiz) => {
-    localStorage.clear();
 
-    const cleanQuiz = {
-      title: quiz.title,
-      description: quiz.description,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      questions: quiz.questions.map(({ id, ...question }) => question),
-    };
-    localStorage.setItem("currentQuiz", JSON.stringify(cleanQuiz));
-  };
 
   return {
     quiz,
