@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useQuiz } from "@/hooks/useQuiz";
 import { ArrowRight, Download, Play, Plus } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
@@ -75,6 +76,8 @@ export default function Home() {
 
     return true;
   };
+
+  const transition = { duration: 0.2 };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
@@ -177,45 +180,68 @@ export default function Home() {
           </div>
 
           {/* Message d'avertissement */}
-          {quiz.questions.length > 0 && !isQuizValid() && (
-            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-              <p className="text-sm text-yellow-600 dark:text-yellow-500">
-                ⚠️ Complétez tous les champs avant de tester ou exporter le quiz
-                :
-              </p>
-              <ul className="text-xs text-yellow-600/80 dark:text-yellow-500/80 mt-2 ml-4 list-disc">
-                <li>Titre du quiz</li>
-                <li>Titre de chaque question</li>
-                <li>Toutes les réponses</li>
-                <li>Au moins une réponse correcte par question</li>
-              </ul>
-            </div>
-          )}
+          <AnimatePresence>
+            {quiz.questions.length > 0 && !isQuizValid() && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={transition}
+              >
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                  <p className="text-sm text-yellow-600 dark:text-yellow-500">
+                    ⚠️ Complétez tous les champs avant de tester ou exporter le
+                    quiz :
+                  </p>
+                  <ul className="text-xs text-yellow-600/80 dark:text-yellow-500/80 mt-2 ml-4 list-disc">
+                    <li
+                      className={`transition-colors
+                    ${quiz.title.trim() === "" ? "text-red-600" : "text-lime-600"}
+                    `}
+                    >
+                      Titre du quiz
+                    </li>
+                    <li>Titre de chaque question</li>
+                    <li>Toutes les réponses</li>
+                    <li>Au moins une réponse correcte par question</li>
+                  </ul>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Questions */}
-          {quiz.questions.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4">
-                Questions ({quiz.questions.length})
-              </h3>
-              <div className="space-y-4">
-                {quiz.questions.map((question, index) => (
-                  <QuestionBuilder
-                    key={question.id}
-                    question={question}
-                    index={index}
-                    onUpdate={updateQuestion}
-                    onDelete={deleteQuestion}
-                    onAddAnswer={addAnswer}
-                    onUpdateAnswer={updateAnswer}
-                    onDeleteAnswer={deleteAnswer}
-                    onToggleCorrect={toggleCorrectAnswer}
-                    onChangeType={changeQuestionType}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+          <AnimatePresence mode="popLayout">
+            {quiz.questions.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <h3 className="text-lg font-semibold mb-4">
+                  Questions ({quiz.questions.length})
+                </h3>
+                <div className="space-y-4">
+                  <AnimatePresence mode="popLayout">
+                    {quiz.questions.map((question, index) => (
+                      <QuestionBuilder
+                        key={question.id}
+                        question={question}
+                        index={index}
+                        onUpdate={updateQuestion}
+                        onDelete={deleteQuestion}
+                        onAddAnswer={addAnswer}
+                        onUpdateAnswer={updateAnswer}
+                        onDeleteAnswer={deleteAnswer}
+                        onToggleCorrect={toggleCorrectAnswer}
+                        onChangeType={changeQuestionType}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3">
@@ -257,13 +283,21 @@ export default function Home() {
           </div>
 
           {/* Note d'aide */}
-          {quiz.questions.length === 0 && (
-            <div className="text-center py-12 bg-muted/30 rounded-lg border-2 border-dashed">
-              <p className="text-muted-foreground">
-                👆 Commencez par ajouter votre première question
-              </p>
-            </div>
-          )}
+          <AnimatePresence>
+            {quiz.questions.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={transition}
+                className="text-center py-12 bg-muted/30 rounded-lg border-2 border-dashed"
+              >
+                <p className="text-muted-foreground">
+                  👆 Commencez par ajouter votre première question
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
