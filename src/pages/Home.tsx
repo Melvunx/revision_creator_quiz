@@ -1,10 +1,17 @@
 // pages/Home.tsx
+import { Board } from "@/components/Board";
+import { MotionButton } from "@/components/MotionButton";
 import { QuestionBuilder } from "@/components/QuizBuilder";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useQuiz } from "@/hooks/useQuiz";
 import { ArrowRight, Download, Play, Plus } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -77,6 +84,43 @@ export default function Home() {
     return true;
   };
 
+  const boards = [
+    {
+      icon: "✏️",
+      task: "Créez",
+      explication: "Ajoutez des questions à choix unique ou multiple",
+    },
+    {
+      icon: "🎮",
+      task: "Testez",
+      explication: "Essayez votre quiz avec questions aléatoires",
+    },
+    {
+      icon: "💾",
+      task: "Exportez",
+      explication: "Téléchargez vos quiz au format JSON",
+    },
+  ];
+
+  const wrapperBoardVariant = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.5, delayChildren: 0.2 },
+    },
+  };
+
+  const boardVariant = {
+    hidden: { opacity: 0, x: -50, y: -20 },
+    visible: { opacity: 1, x: 0, y: 0 },
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  };
+
   const transition = { duration: 0.2 };
 
   return (
@@ -88,9 +132,26 @@ export default function Home() {
             <h1 className="text-4xl font-bold bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               Créateur de Quiz
             </h1>
-            <Badge variant="secondary" className="text-sm px-3 py-1 italic">
-              Par Melvunx 🥷🏾
-            </Badge>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <a href="https://github.com/Melvunx" target="_blank">
+                    <Badge
+                      variant="secondary"
+                      className="text-sm px-3 py-1 italic"
+                    >
+                      Par Melvunx 🥷🏾
+                    </Badge>
+                  </a>
+                </motion.div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Mon github !</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Présentation du projet */}
@@ -106,35 +167,20 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4 pt-2">
-              <div className="space-y-1 hover:bg-neutral-300/45 transition-colors rounded-sm">
-                <div className="font-medium text-sm flex items-center gap-2">
-                  <span className="text-lg">✏️</span>
-                  Créez
-                </div>
-                <p className="ml-0.5 italic text-xs text-muted-foreground">
-                  Ajoutez des questions à choix unique ou multiple
-                </p>
-              </div>
-              <div className="space-y-1 hover:bg-neutral-300/45 transition-colors rounded-sm">
-                <div className="font-medium text-sm flex items-center gap-2">
-                  <span className="text-lg">🎮</span>
-                  Testez
-                </div>
-                <p className="ml-0.5 italic text-xs text-muted-foreground">
-                  Essayez votre quiz avec questions aléatoires
-                </p>
-              </div>
-              <div className="w-52 space-y-1 hover:bg-neutral-300/45 transition-colors rounded-sm">
-                <div className="font-medium text-sm flex items-center gap-2">
-                  <span className="text-lg">💾</span>
-                  Exportez
-                </div>
-                <p className="ml-0.5 italic text-xs text-muted-foreground">
-                  Téléchargez vos quiz au format JSON
-                </p>
-              </div>
-            </div>
+            <motion.div
+              className="grid md:grid-cols-3 gap-4 pt-2"
+              variants={wrapperBoardVariant}
+              initial="hidden"
+              animate="visible"
+            >
+              {boards.map((board) => (
+                <Board
+                  key={board.task}
+                  board={board}
+                  itemVariants={boardVariant}
+                />
+              ))}
+            </motion.div>
           </div>
         </div>
 
@@ -245,16 +291,20 @@ export default function Home() {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3">
-            <Button onClick={addQuestion} size="lg">
+            <MotionButton onClick={addQuestion} size="lg">
               <Plus className="h-4 w-4 mr-2" />
               Ajouter une question
-            </Button>
+            </MotionButton>
 
             {quiz.questions.length === 0 && (
-              <Button variant="outline" size="lg" onClick={handleTestQuiz}>
+              <MotionButton
+                variant="outline"
+                size="lg"
+                onClick={handleTestQuiz}
+              >
                 Tester un quiz
                 <ArrowRight className="h-4 w-4 mr-2" />
-              </Button>
+              </MotionButton>
             )}
 
             {quiz.questions.length > 0 && (

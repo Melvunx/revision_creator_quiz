@@ -5,8 +5,8 @@ import { Button } from "./ui/button";
 type MotionButtonProprs = {
   children?: React.ReactNode;
   disabled?: boolean;
-  scale: "button" | "icon";
-  size:
+  scale?: "button" | "icon";
+  size?:
     | "default"
     | "xs"
     | "sm"
@@ -16,7 +16,7 @@ type MotionButtonProprs = {
     | "icon-sm"
     | "icon-lg"
     | null;
-  variant:
+  variant?:
     | "link"
     | "outline"
     | "default"
