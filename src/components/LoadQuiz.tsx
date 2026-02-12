@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { MotionButton } from "./MotionButton";
 
 type LoadQuizProps = {
   error: string;
@@ -12,13 +13,19 @@ export function LoadQuiz({ error, handleFileUpload }: LoadQuizProps) {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto py-8 max-w-2xl">
-      <Button variant="ghost" onClick={() => navigate("/")} className="mb-6">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Retour à l'accueil
-      </Button>
+    <div className="min-h-screen container mx-auto py-6 flex flex-col gap-12 justify-center max-w-2xl">
+      <div className="flex">
+        <MotionButton
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-6"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour à l'accueil
+        </MotionButton>
+      </div>
 
-      <Card>
+      <Card className="bg-muted/30 rounded-lg border-2 border-dashed">
         <CardContent className="pt-6">
           <div className="text-center space-y-6">
             <div>

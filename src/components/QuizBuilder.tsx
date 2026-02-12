@@ -84,9 +84,12 @@ export const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Titre de la question */}
-          <div>
+          <div className="flex flex-col gap-1">
             <Label htmlFor={`question-${question.id}`}>
-              Titre de la question
+              <p>
+                Titre de la question
+                <span className="text-red-600 font-extrabold">*</span>
+              </p>
             </Label>
             <Input
               id={`question-${question.id}`}
@@ -97,7 +100,7 @@ export const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
           </div>
 
           {/* Type de question */}
-          <div>
+          <div className="flex flex-col gap-1">
             <Label>Type de question</Label>
             <Select
               value={question.type}

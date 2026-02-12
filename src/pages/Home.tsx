@@ -39,31 +39,45 @@ export default function Home() {
     navigate("/quiz");
   };
 
-  const isQuizValid = () => {
-    // Vérifier le titre du quiz
+  const isTitleQuizValid = () => {
     if (!quiz.title || quiz.title.trim() === "") {
       return false;
     }
+    return true;
+  };
 
-    // Vérifier qu'il y a au moins une question
+  const isQuestionLengthValid = () => {
     if (quiz.questions.length === 0) {
       return false;
     }
+    return true;
+  };
 
-    // Vérifier chaque question
+  // Vérifier le titre de la question
+  const isQuestionsTitleValid = () => {
     for (const question of quiz.questions) {
-      // Vérifier le titre de la question
       if (!question.title || question.title.trim() === "") {
         return false;
       }
+    }
+    return true;
+  };
 
-      // Vérifier que toutes les réponses sont remplies
+  // Vérifier que toutes les réponses sont remplies
+  const isAnswersValid = () => {
+    for (const question of quiz.questions) {
       for (const answer of question.answers) {
         if (!answer || answer.trim() === "") {
           return false;
         }
       }
+    }
+    return true;
+  };
 
+  // Vérifier que toutes les réponses sont remplies
+  const isCorrectAnswersValid = () => {
+    for (const question of quiz.questions) {
       // Vérifier qu'au moins une réponse correcte est sélectionnée
       if (question.type === "unique") {
         // Pour les questions à choix unique
@@ -80,6 +94,22 @@ export default function Home() {
         }
       }
     }
+
+    return true;
+  };
+
+  const isQuizValid = () => {
+    // Vérifier le titre du quiz
+    if (!isTitleQuizValid()) return false;
+
+    // Vérifier qu'il y a au moins une question
+    if (!isQuestionLengthValid()) return false;
+
+    if (!isQuestionsTitleValid()) return false;
+
+    if (!isAnswersValid()) return false;
+
+    if (!isCorrectAnswersValid()) return false;
 
     return true;
   };
@@ -235,21 +265,39 @@ export default function Home() {
                 transition={transition}
               >
                 <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-                  <p className="text-sm text-yellow-600 dark:text-yellow-500">
+                  <h1 className="text-lg text-yellow-600 dark:text-yellow-500">
                     ⚠️ Complétez tous les champs avant de tester ou exporter le
                     quiz :
-                  </p>
-                  <ul className="text-xs text-yellow-600/80 dark:text-yellow-500/80 mt-2 ml-4 list-disc">
+                  </h1>
+                  <ul className="text-sm text-yellow-600/80 dark:text-yellow-500/80 mt-3 ml-5 list-disc">
                     <li
                       className={`transition-colors
-                    ${quiz.title.trim() === "" ? "text-red-600" : "text-lime-600"}
+                    ${!isTitleQuizValid() ? "text-red-600" : "text-lime-600"}
                     `}
                     >
                       Titre du quiz
                     </li>
-                    <li>Titre de chaque question</li>
-                    <li>Toutes les réponses</li>
-                    <li>Au moins une réponse correcte par question</li>
+                    <li
+                      className={`transition-colors
+                    ${!isQuestionsTitleValid() ? "text-red-600" : "text-lime-600"}
+                    `}
+                    >
+                      Titre de chaque question
+                    </li>
+                    <li
+                      className={`transition-colors
+                    ${!isAnswersValid() ? "text-red-600" : "text-lime-600"}
+                    `}
+                    >
+                      Toutes les réponses
+                    </li>
+                    <li
+                      className={`transition-colors
+                    ${!isCorrectAnswersValid() ? "text-red-600" : "text-lime-600"}
+                    `}
+                    >
+                      Au moins une réponse correcte par question
+                    </li>
                   </ul>
                 </div>
               </motion.div>
