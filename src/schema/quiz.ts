@@ -14,6 +14,12 @@ export type Quiz = {
   questions: Question[];
 };
 
+export type QuestionResult = {
+  question: Question;
+  userAnswer: string | string[] | undefined;
+  isCorrect: boolean;
+};
+
 export type ExportQuiz = {
   title: string;
   description: string;

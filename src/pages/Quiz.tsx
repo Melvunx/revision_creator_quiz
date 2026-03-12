@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -115,7 +116,7 @@ export default function Quiz() {
   // Écran de résultats
   if (isFinished) {
     return (
-      <div className="container mx-auto py-8 max-w-4xl">
+      <div className="flex justify-center items-center h-screen mx-auto">
         <QuizResults
           score={score}
           totalQuestions={totalQuestions}
@@ -133,12 +134,14 @@ export default function Quiz() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Quitter le quiz
         </Button>
-        <h1 className="text-3xl font-bold mb-2">{quiz.title}</h1>
-        <p className="text-muted-foreground">{quiz.description}</p>
+        <div className="my-4">
+          <h1 className="text-3xl font-bold mb-2">{quiz.title}</h1>
+          <p className="text-muted-foreground">{quiz.description}</p>
+        </div>
       </div>
 
       {/* Barre de progression */}
-      <div className="mb-6">
+      <div className="my-6">
         <div className="flex justify-between text-sm text-muted-foreground mb-2">
           <span>Progression</span>
           <span>
@@ -156,13 +159,15 @@ export default function Quiz() {
       </div>
 
       {/* Question */}
-      <QuestionCard
-        question={currentQuestion}
-        questionNumber={currentQuestionIndex + 1}
-        totalQuestions={totalQuestions}
-        userAnswer={userAnswers.get(currentQuestion.id)}
-        onSelectAnswer={selectAnswer}
-      />
+      <AnimatePresence mode="wait">
+        <QuestionCard
+          question={currentQuestion}
+          questionNumber={currentQuestionIndex + 1}
+          totalQuestions={totalQuestions}
+          userAnswer={userAnswers.get(currentQuestion.id)}
+          onSelectAnswer={selectAnswer}
+        />
+      </AnimatePresence>
 
       {/* Navigation */}
       <div className="flex justify-between mt-6">

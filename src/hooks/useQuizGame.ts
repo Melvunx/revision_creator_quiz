@@ -1,5 +1,5 @@
 // hooks/useQuizGame.ts
-import type { Question } from "@/schema/quiz";
+import type { Question, QuestionResult } from "@/schema/quiz";
 import { useMemo, useState } from "react";
 
 interface QuizGameState {
@@ -69,6 +69,29 @@ export const useQuizGame = (questions: Question[]) => {
         currentQuestionIndex: prev.currentQuestionIndex - 1,
       }));
     }
+  };
+
+  const getDetailedResults = (): QuestionResult[] => {
+    return shuffledQuestions.map((question) => {
+      const userAnswer = gameState.userAnswers.get(question.id);
+      let isCorrect = false;
+
+      if (question.type === "unique") {
+        isCorrect = userAnswer === question.correct_answers;
+      } else {
+        const correctAnswers = question.correct_answers as string[];
+        const userAnswersArray = (userAnswer as string[]) || [];
+        isCorrect =
+          correctAnswers.length === userAnswersArray.length &&
+          correctAnswers.every((ans) => userAnswersArray.includes(ans));
+      }
+
+      return {
+        question,
+        userAnswer,
+        isCorrect,
+      };
+    });
   };
 
   const finishQuiz = () => {
@@ -142,6 +165,7 @@ export const useQuizGame = (questions: Question[]) => {
     selectAnswer,
     nextQuestion,
     previousQuestion,
+    getDetailedResults,
     finishQuiz,
     resetQuiz,
     canProceed: canProceed(),
