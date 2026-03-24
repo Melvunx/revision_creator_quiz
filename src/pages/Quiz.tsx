@@ -2,6 +2,7 @@
 import { LoadQuiz } from "@/components/LoadQuiz";
 import { QuestionCard } from "@/components/QuestionCard";
 import { QuizResults } from "@/components/QuizResults";
+import { QuizReview } from "@/components/QuizReview";
 import { Button } from "@/components/ui/button";
 import { useQuizGame } from "@/hooks/useQuizGame";
 import type { Question, Quiz } from "@/schema/quiz";
@@ -27,11 +28,14 @@ export default function Quiz() {
     userAnswers,
     isFinished,
     score,
+    showReview,
     selectAnswer,
     nextQuestion,
     previousQuestion,
     finishQuiz,
     resetQuiz,
+    getDetailedResults,
+    toggleReview,
     canProceed,
   } = useQuizGame(quiz?.questions || []);
 
@@ -120,8 +124,16 @@ export default function Quiz() {
         <QuizResults
           score={score}
           totalQuestions={totalQuestions}
+          showReview={showReview}
+          onToggleReview={toggleReview}
           onRestart={handleRestart}
         />
+
+        {showReview && (
+          <div className="mt-8">
+            <QuizReview results={getDetailedResults()} />
+          </div>
+        )}
       </div>
     );
   }

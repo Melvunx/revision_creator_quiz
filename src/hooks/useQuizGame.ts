@@ -2,12 +2,13 @@
 import type { Question, QuestionResult } from "@/schema/quiz";
 import { useMemo, useState } from "react";
 
-interface QuizGameState {
+type QuizGameState = {
   currentQuestionIndex: number;
   userAnswers: Map<number, string | string[]>;
   isFinished: boolean;
   score: number;
-}
+  showReview: boolean;
+};
 
 export const useQuizGame = (questions: Question[]) => {
   const [gameState, setGameState] = useState<QuizGameState>({
@@ -15,6 +16,7 @@ export const useQuizGame = (questions: Question[]) => {
     userAnswers: new Map(),
     isFinished: false,
     score: 0,
+    showReview: false,
   });
 
   // Mélanger les questions de manière aléatoire
@@ -103,6 +105,13 @@ export const useQuizGame = (questions: Question[]) => {
     }));
   };
 
+  const toggleReview = () => {
+    setGameState((prev) => ({
+      ...prev,
+      showReview: !prev.showReview,
+    }));
+  };
+
   const calculateScore = () => {
     if (shuffledQuestions.length === 0) return 0;
 
@@ -140,6 +149,7 @@ export const useQuizGame = (questions: Question[]) => {
       userAnswers: new Map(),
       isFinished: false,
       score: 0,
+      showReview: false,
     });
   };
 
@@ -162,11 +172,13 @@ export const useQuizGame = (questions: Question[]) => {
     userAnswers: gameState.userAnswers,
     isFinished: gameState.isFinished,
     score: gameState.score,
+    showReview: gameState.showReview,
     selectAnswer,
     nextQuestion,
     previousQuestion,
     getDetailedResults,
     finishQuiz,
+    toggleReview,
     resetQuiz,
     canProceed: canProceed(),
   };

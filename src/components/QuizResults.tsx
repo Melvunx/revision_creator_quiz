@@ -1,19 +1,23 @@
 // components/QuizResults.tsx
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, RotateCcw, Trophy } from "lucide-react";
+import { Eye, EyeOff, Home, RotateCcw, Trophy } from "lucide-react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 
-interface QuizResultsProps {
+type QuizResultsProps = {
   score: number;
   totalQuestions: number;
+  showReview: boolean;
+  onToggleReview: () => void;
   onRestart: () => void;
-}
+};
 
 export const QuizResults: React.FC<QuizResultsProps> = ({
   score,
   totalQuestions,
+  showReview,
+  onToggleReview,
   onRestart,
 }) => {
   const navigate = useNavigate();
@@ -94,6 +98,24 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
             >
               <Home className="h-4 w-4 mr-2" />
               Créer un nouveau quiz
+            </Button>
+            <Button
+              onClick={onToggleReview}
+              variant="outline"
+              size="lg"
+              className="flex-1 hover:bg-lime-200"
+            >
+              {showReview ? (
+                <>
+                  <EyeOff className="h-4 w-4 mr-2" />
+                  Masquer les corrections
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Voir les corrections
+                </>
+              )}
             </Button>
           </div>
         </CardContent>
