@@ -120,19 +120,23 @@ export default function Quiz() {
   // Écran de résultats
   if (isFinished) {
     return (
-      <div className="flex justify-center items-center h-screen mx-auto">
-        <QuizResults
-          score={score}
-          totalQuestions={totalQuestions}
-          showReview={showReview}
-          onToggleReview={toggleReview}
-          onRestart={handleRestart}
-        />
-
-        {showReview && (
+      <div className="flex justify-center items-center w-full max-w-6xl h-screen mx-auto">
+        {showReview ? (
           <div className="mt-8">
-            <QuizReview results={getDetailedResults()} />
+            <QuizReview
+              results={getDetailedResults()}
+              showReview={showReview}
+              onToggleReview={toggleReview}
+            />
           </div>
+        ) : (
+          <QuizResults
+            score={score}
+            totalQuestions={totalQuestions}
+            showReview={showReview}
+            onToggleReview={toggleReview}
+            onRestart={handleRestart}
+          />
         )}
       </div>
     );
@@ -140,15 +144,19 @@ export default function Quiz() {
 
   // Écran de quiz
   return (
-    <div className="container mx-auto py-8 max-w-4xl">
+    <div className="container mx-auto py-8 max-w-5xl">
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-4 text-xl"
+        >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Quitter le quiz
         </Button>
         <div className="my-4">
-          <h1 className="text-3xl font-bold mb-2">{quiz.title}</h1>
-          <p className="text-muted-foreground">{quiz.description}</p>
+          <h1 className="text-4xl font-bold mb-2">{quiz.title}</h1>
+          <p className="text-xl text-muted-foreground">{quiz.description}</p>
         </div>
       </div>
 

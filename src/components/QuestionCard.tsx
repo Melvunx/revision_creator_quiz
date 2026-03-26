@@ -78,7 +78,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <div className="text-muted-foreground mb-2">
             Question {questionNumber} sur {totalQuestions}
           </div>
-          <CardTitle className="text-xl">{question.title}</CardTitle>
+          <CardTitle className="text-2xl">{question.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

@@ -2,14 +2,22 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { QuestionResult } from "@/schema/quiz";
-import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, Eye, EyeOff, XCircle } from "lucide-react";
 import { motion } from "motion/react";
+import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
 
 type QuizReviewProps = {
   results: QuestionResult[];
-}
+  showReview: boolean;
+  onToggleReview: () => void;
+};
 
-export const QuizReview: React.FC<QuizReviewProps> = ({ results }) => {
+export const QuizReview: React.FC<QuizReviewProps> = ({
+  results,
+  showReview,
+  onToggleReview,
+}) => {
   const getAnswerStatus = (
     answer: string,
     userAnswer: string | string[] | undefined,
@@ -70,114 +78,133 @@ export const QuizReview: React.FC<QuizReviewProps> = ({ results }) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Révision des réponses</h2>
-        <div className="flex gap-4 text-sm">
-          <div className="flex items-center gap-2">
+    <div className="space-y-6 container h-screen">
+      <h1 className="text-3xl font-bold">Révision des réponses</h1>
+      <div className="flex w-full max-w-3xl items-center justify-between">
+        <div className="flex gap-14 text-sm">
+          <div className="flex items-center gap-2 px-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <span>Correct</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
             <XCircle className="h-4 w-4 text-red-600" />
             <span>Erreur</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
             <AlertCircle className="h-4 w-4 text-orange-600" />
             <span>Manqué</span>
           </div>
+          <Button
+            onClick={onToggleReview}
+            variant="outline"
+            size="lg"
+            className="flex-1 hover:bg-lime-200"
+          >
+            {showReview ? (
+              <>
+                <EyeOff className="h-4 w-4 mr-2" />
+                Masquer les corrections
+              </>
+            ) : (
+              <>
+                <Eye className="h-4 w-4 mr-2" />
+                Voir les corrections
+              </>
+            )}
+          </Button>
         </div>
       </div>
 
-      {results.map((result, index) => (
-        <motion.div
-          key={result.question.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-        >
-          <Card
-            className={
-              !result.isCorrect ? "border-red-300 dark:border-red-800" : ""
-            }
+      <ScrollArea className="h-4/5 rounded-lg border">
+        {results.map((result, index) => (
+          <motion.div
+            key={result.question.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="py-8 px-12"
           >
-            <CardHeader>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm text-muted-foreground">
-                      Question {index + 1}
-                    </span>
-                    {result.isCorrect ? (
-                      <Badge className="bg-green-500 hover:bg-green-600">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        Correct
-                      </Badge>
-                    ) : (
-                      <Badge variant="destructive">
-                        <XCircle className="h-3 w-3 mr-1" />
-                        Incorrect
-                      </Badge>
-                    )}
-                  </div>
-                  <CardTitle className="text-lg">
-                    {result.question.title}
-                  </CardTitle>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {result.question.answers.map((answer, answerIndex) => {
-                  const status = getAnswerStatus(
-                    answer,
-                    result.userAnswer,
-                    result.question.correct_answers,
-                  );
-
-                  return (
-                    <div
-                      key={answerIndex}
-                      className={`flex items-center gap-3 p-3 rounded-lg border-2 ${getAnswerClassName(status)}`}
-                    >
-                      <div className="shrink-0">{getAnswerIcon(status)}</div>
-                      <div className="flex-1">
-                        <p className="font-medium">{answer}</p>
-                        {status === "missed" && (
-                          <p className="text-xs text-orange-700 dark:text-orange-400 mt-1">
-                            Vous auriez dû sélectionner cette réponse
-                          </p>
-                        )}
-                        {status === "wrong" && (
-                          <p className="text-xs text-red-700 dark:text-red-400 mt-1">
-                            Cette réponse est incorrecte
-                          </p>
-                        )}
-                      </div>
+            <Card
+              className={`border-2 ${!result.isCorrect ? "border-red-400 dark:border-red-800" : "border-lime-300 dark:border-green-600"}`}
+            >
+              <CardHeader>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm text-muted-foreground">
+                        Question {index + 1}
+                      </span>
+                      {result.isCorrect ? (
+                        <Badge className="bg-green-500 hover:bg-green-600">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          Correct
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive">
+                          <XCircle className="h-3 w-3 mr-1" />
+                          Incorrect
+                        </Badge>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Explication supplémentaire si question incorrecte */}
-              {!result.isCorrect && (
-                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <p className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
-                    {result.question.type === "unique"
-                      ? "💡 Réponse correcte :"
-                      : "💡 Réponses correctes :"}
-                  </p>
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
-                    {Array.isArray(result.question.correct_answers)
-                      ? result.question.correct_answers.join(", ")
-                      : result.question.correct_answers}
-                  </p>
+                    <CardTitle className="text-lg">
+                      {result.question.title}
+                    </CardTitle>
+                  </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      ))}
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {result.question.answers.map((answer, answerIndex) => {
+                    const status = getAnswerStatus(
+                      answer,
+                      result.userAnswer,
+                      result.question.correct_answers,
+                    );
+
+                    return (
+                      <div
+                        key={answerIndex}
+                        className={`flex items-center gap-3 p-3 rounded-lg border-2 ${getAnswerClassName(status)}`}
+                      >
+                        <div className="shrink-0">{getAnswerIcon(status)}</div>
+                        <div className="flex-1">
+                          <p className="font-medium">{answer}</p>
+                          {status === "missed" && (
+                            <p className="text-xs text-orange-700 dark:text-orange-400 mt-1">
+                              Vous auriez dû sélectionner cette réponse
+                            </p>
+                          )}
+                          {status === "wrong" && (
+                            <p className="text-xs text-red-700 dark:text-red-400 mt-1">
+                              Cette réponse est incorrecte
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Explication supplémentaire si question incorrecte */}
+                {!result.isCorrect && (
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
+                      {result.question.type === "unique"
+                        ? "💡 Réponse correcte :"
+                        : "💡 Réponses correctes :"}
+                    </p>
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      {Array.isArray(result.question.correct_answers)
+                        ? result.question.correct_answers.join(", ")
+                        : result.question.correct_answers}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </ScrollArea>
     </div>
   );
 };
