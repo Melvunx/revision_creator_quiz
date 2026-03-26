@@ -1,9 +1,20 @@
 // components/QuizResults.tsx
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, EyeOff, Home, RotateCcw, Trophy } from "lucide-react";
+import { Eye, EyeOff, PenBox, RotateCcw, Trophy } from "lucide-react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 type QuizResultsProps = {
   score: number;
@@ -36,6 +47,11 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
     return "Continuez à vous entraîner ! 📚";
   };
 
+  const loadNewQuiz = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, x: -200, scale: 0.5 },
     visible: {
@@ -55,7 +71,7 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
       animate="visible"
       transition={{ ease: "easeOut" }}
     >
-      <Card className="container w-3xl">
+      <Card className="container w-6xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Trophy className="h-16 w-16 text-yellow-500" />
@@ -96,9 +112,31 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
               className="flex-1"
               size="lg"
             >
-              <Home className="h-4 w-4 mr-2" />
+              <PenBox className="h-4 w-4 mr-2" />
               Créer un nouveau quiz
             </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="flex-1">Charger un nouveau quiz</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Êtes-vous sûr de vouloir faire cela ?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Si vous décidez de charger un nouveau quiz, le quiz que vous
+                    avez télécharger sera définitivement supprimé !
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction onClick={loadNewQuiz}>
+                    Continuer
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <Button
               onClick={onToggleReview}
               variant="outline"
